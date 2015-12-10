@@ -1,0 +1,66 @@
+<html>
+<head>
+<style>
+.actionButton {
+height: 100px;
+width: 100px;
+}
+</style>
+
+<script>
+var app = {};
+app.finished = true;
+app.arrOfTracks = [
+ '1.mp3',
+ '2.mp3',
+ '3.mp3',
+ '4.mp3'
+];
+
+app.getRandomTrack =  function () {
+	var playNext = app.arrOfTracks[Math.floor(Math.random()*app.arrOfTracks.length)];
+	if (playNext === app.nowPlaying){
+		return app.getRandomTrack();
+	}
+	return playNext;
+}
+
+app.playRandomTrack = function () {
+	if (!app.finished){	
+		console.log('not yet finished playing');
+		return;
+	}
+	console.log('oh yeah, lets play new song');
+	console.log('now playing: '+ app.nowPlaying);
+	app.nowPlaying = app.getRandomTrack();
+	console.log('will play next: '+ app.nowPlaying);
+	app.audio.setAttribute('src', app.nowPlaying);
+	app.audio.load();
+	app.audio.play();
+	app.finished = false;
+}
+
+app.finishedPlaying = function () {
+	console.log('finishedPlaying');
+	app.finished=true;
+}
+
+window.onload = function() {
+var audioEl = document.createElement("audio"); 
+document.getElementsByTagName('body')[0].appendChild(audioEl); 
+
+app.audio = document.getElementsByTagName('audio')[0];
+app.audio.setAttribute('onended', 'app.finishedPlaying()');
+
+document.onkeypress = function () {
+	app.playRandomTrack();
+	console.log('keyPressed');
+}
+
+};
+
+</script>
+</head>
+<body>
+</body>
+</html>
