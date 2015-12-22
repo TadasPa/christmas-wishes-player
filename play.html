@@ -6,16 +6,10 @@ height: 100px;
 width: 100px;
 }
 </style>
-
+<script src="arrOfTracks.js"></script>
 <script>
-var app = {};
+var app = app || {};
 app.finished = true;
-app.arrOfTracks = [
- '1.mp3',
- '2.mp3',
- '3.mp3',
- '4.mp3'
-];
 
 app.getRandomTrack =  function () {
 	var playNext = app.arrOfTracks[Math.floor(Math.random()*app.arrOfTracks.length)];
@@ -25,6 +19,29 @@ app.getRandomTrack =  function () {
 	return playNext;
 }
 
+app.getNowPlayingIdx = function () {
+ for (var i=0; i < app.arrOfTracks.length; i++) {
+    if (app.arrOfTracks[i] === app.nowPlaying) {
+        console.log('getNowPlayingIdx return: '+ i);
+        return i;
+    }
+ }
+ console.log('getNowPlayingIdx return: '+ 0);
+ return 0; // should not happen
+}
+
+app.getNextTrack = function () {
+    if (!app.nowPlaying) {
+        return app.arrOfTracks[0]; // play first
+    }
+    var nowIdx = app.getNowPlayingIdx();
+    if (nowIdx === (app.arrOfTracks.length-1)){
+        return app.arrOfTracks[0]; // play first
+    }
+    var newIdx = nowIdx+1;
+    return app.arrOfTracks[newIdx];
+}
+
 app.playRandomTrack = function () {
 	if (!app.finished){	
 		console.log('not yet finished playing');
@@ -32,33 +49,28 @@ app.playRandomTrack = function () {
 	}
 	console.log('oh yeah, lets play new song');
 	console.log('now playing: '+ app.nowPlaying);
-	app.nowPlaying = app.getRandomTrack();
+	//app.nowPlaying = app.getRandomTrack();
+    app.nowPlaying = app.getNextTrack();
 	console.log('will play next: '+ app.nowPlaying);
 	app.audio.setAttribute('src', app.nowPlaying);
 	app.audio.load();
 	app.audio.play();
 	app.finished = false;
 }
-
 app.finishedPlaying = function () {
 	console.log('finishedPlaying');
 	app.finished=true;
 }
-
 window.onload = function() {
 var audioEl = document.createElement("audio"); 
 document.getElementsByTagName('body')[0].appendChild(audioEl); 
-
 app.audio = document.getElementsByTagName('audio')[0];
 app.audio.setAttribute('onended', 'app.finishedPlaying()');
-
 document.onkeypress = function () {
 	app.playRandomTrack();
 	console.log('keyPressed');
 }
-
 };
-
 </script>
 </head>
 <body>
